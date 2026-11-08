@@ -43,7 +43,9 @@ gunicorn --no-control-socket --bind 127.0.0.1:8080 paper_pms.web:application
 
 ## Validation
 
-Eleven unit tests and seven isolated PostgreSQL 18.6 acceptance tests passed. Coverage includes duplicate/concurrent delivery, changed-input rejection, transaction rollback/retry, append-only rules, strict boolean reconciliation, role restrictions, logical backup/restore, public projection, and WSGI reads. See `integration/README.md` for the disposable database harness. The PostgreSQL tests found and fixed a constraint that accepted the string `"true"` instead of JSON boolean `true`.
+Eleven unit tests and eight isolated PostgreSQL 18.6 acceptance tests passed. Coverage includes duplicate/concurrent delivery, changed-input rejection, transaction rollback/retry, append-only rules, strict boolean reconciliation, role restrictions, logical backup/restore, public projection, and WSGI reads. See `integration/README.md` for the disposable database harness. The PostgreSQL tests found and fixed a constraint that accepted the string `"true"` instead of JSON boolean `true`.
+
+The Linux amd64 web container also passed [GitHub Actions acceptance](https://github.com/sai-reddivari/portfolio-pms/actions/runs/42432304738): digest-pinned base image, non-root user, read-only filesystem, PostgreSQL-backed HTML/JSON, write rejection, and sanitized database-outage responses. Public database reads have a five-second statement timeout; a real lock-wait test confirms rollback and recovery. The image is web-only; it does not package the research worker dependency.
 
 These checks do not certify managed-cloud network/TLS behavior or a prospective trading ledger. A separate disposable DigitalOcean static-site smoke test passed deployment, unattended redeployment, HTTP health, and cleanup; that test did not deploy this PMS application.
 
@@ -54,7 +56,6 @@ These checks do not certify managed-cloud network/TLS behavior or a prospective 
 Remaining gates:
 
 - A reviewed, installable upstream interface for incremental dated events, calendar accrual, valuation, and reconciliation.
-- A tested container build and immutable base-image digest.
 - Scheduler retry/backfill behavior, archive recovery, and managed-cloud network/TLS validation.
 - Repository-specific cloud source authorization and concrete resource review before persistent deployment.
 

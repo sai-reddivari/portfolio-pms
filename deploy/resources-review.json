@@ -83,7 +83,7 @@
     "Repository-specific cloud source connection requires review and authorization",
     "Pinned local research revision not yet delivered as reviewed installable release",
     "Incremental calendar-aware accounting contract not yet extracted upstream",
-    "Docker build/base digest, scheduler/archive recovery and managed-cloud TLS/network validation remain unverified"
+    "Scheduler/archive recovery and managed-cloud TLS/network validation remain unverified"
   ],
   "next_human_auth_after_release_ready": "DigitalOcean Create > App Platform > GitHub; authorize access only to the reviewed PMS repository. Do not click Create App until resource review is accepted.",
   "official_docs": [
@@ -96,7 +96,15 @@
   ],
   "local_database_acceptance": {
     "version": "PostgreSQL 18.6",
-    "tests_passed": 7,
+    "tests_passed": 8,
     "cloud_parity": "not claimed"
+  },
+  "web_container_acceptance": {
+    "status": "PASS",
+    "platform": "linux/amd64",
+    "run_url": "https://github.com/sai-reddivari/portfolio-pms/actions/runs/42432304738",
+    "tested_commit": "ae0e9a9e8a0968d7caf60e225325ac4e74130739",
+    "image_published": false,
+    "cloud_deployed": false
   }
 }

@@ -1,5 +1,5 @@
 # REVIEW TEMPLATE ONLY. Source publication does not clear release gates; do not submit this file.
-# Schema/API validation and image build remain required before provisioning review.
+# Linux web image passed CI; cloud spec/API validation and remaining release gates still apply.
 name: paper-pms
 region: nyc
 services:
