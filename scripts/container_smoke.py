@@ -1,5 +1,6 @@
 """Disposable Linux Docker acceptance; no external account credentials or publishing."""
 import json
+import base64
 from pathlib import Path
 import subprocess
 import time
@@ -49,23 +50,24 @@ finally: s.close()
         docker('run', '--rm', '-i', '--network', network, 'pms-web:test', 'python', '-', input=seed)
         docker('run', '-d', '--name', web, '--network', network, '--read-only',
                '--tmpfs', '/tmp:rw,noexec,nosuid,size=64m', '--cap-drop', 'ALL',
-               '--security-opt', 'no-new-privileges', '-p', '127.0.0.1::8080',
+               '--security-opt', 'no-new-privileges',
                '-e', f'PMS_PUBLIC_DATABASE_URL=host={database} user=pms_public_read dbname=postgres',
                'pms-web:test')
         started.append(web)
-        port = docker('port', web, '8080/tcp').rsplit(':', 1)[1]
-        base = f'http://127.0.0.1:{port}'
         def request(path, method='GET'):
-            try:
-                response = urllib.request.urlopen(urllib.request.Request(base+path, method=method), timeout=3)
-            except urllib.error.HTTPError as error:
-                response = error
-            return response.status, response.read(), response.headers
+            probe = """import urllib.request,urllib.error,json,base64,sys
+try:
+ r=urllib.request.urlopen(urllib.request.Request('http://127.0.0.1:8080'+sys.argv[1],method=sys.argv[2]),timeout=12)
+except urllib.error.HTTPError as error: r=error
+print(json.dumps([r.status,base64.b64encode(r.read()).decode(),dict(r.headers)]))
+"""
+            status, encoded, headers = json.loads(docker('exec', web, 'python', '-c', probe, path, method))
+            return status, base64.b64decode(encoded), headers
         for _ in range(30):
             try:
                 if request('/health/live')[0] == 200:
                     break
-            except (OSError, urllib.error.URLError):
+            except (OSError, subprocess.CalledProcessError):
                 pass
             time.sleep(1)
         else:

@@ -132,6 +132,14 @@ class PostgresAcceptance(unittest.TestCase):
         with psycopg.connect(restore_dsn) as db:
             self.assertEqual(db.execute('SELECT payload FROM pms_private.snapshots').fetchone()[0], self.payload)
 
+    def test_blocked_public_read_times_out_and_recovers(self):
+        self.writer.save('cycle', self.payload)
+        with psycopg.connect(self.owner) as blocker:
+            blocker.execute('LOCK TABLE pms_public.snapshots IN ACCESS EXCLUSIVE MODE')
+            with self.assertRaises(psycopg.errors.QueryCanceled):
+                self.reader.read_public()
+        self.assertEqual(self.reader.read_public()['mode'], 'synthetic-replay')
+
     def test_wsgi_reads_committed_projection(self):
         self.writer.save('cycle', self.payload)
         for path in ['/', '/snapshot.json', '/health/freshness']:
