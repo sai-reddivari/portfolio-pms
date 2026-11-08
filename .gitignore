@@ -1,0 +1,15 @@
+work/
+__pycache__/
+*.pyc
+*.db
+*.db-wal
+*.db-shm
+.venv/
+.env
+.env.*
+!.env.example
+outputs/
+CHECKPOINT.json
+*.pem
+*.key
+.DS_Store

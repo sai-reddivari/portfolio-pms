@@ -1,0 +1,34 @@
+# REVIEW TEMPLATE ONLY. Source publication does not clear release gates; do not submit this file.
+# Schema/API validation and image build remain required before provisioning review.
+name: paper-pms
+region: nyc
+services:
+  - name: web
+    github:
+      repo: sai-reddivari/portfolio-pms
+      branch: main
+      deploy_on_push: false
+    dockerfile_path: Dockerfile
+    instance_size_slug: apps-s-1vcpu-0.5gb
+    instance_count: 1
+    http_port: 8080
+    run_command: gunicorn --no-control-socket --bind 0.0.0.0:8080 --workers 1 --threads 2 --timeout 30 paper_pms.web:application
+    health_check:
+      http_path: /health/live
+    envs:
+      - key: PMS_PUBLIC_DATABASE_URL
+        scope: RUN_TIME
+        type: SECRET
+        value: REPLACE_PRIVATELY_WITH_SELECT_ONLY_CONNECTION
+ingress:
+  rules:
+    - component:
+        name: web
+      match:
+        path:
+          prefix: /
+# Job is intentionally absent until upstream package and PG acceptance pass.
+# Proposed job: name=cycle, kind=SCHEDULED, cron='0 * * * *', time_zone=Etc/UTC,
+# size=apps-s-1vcpu-1gb-fixed, command='python -m paper_pms.worker',
+# PMS_MODE=synthetic-replay plus private writer DSN and verified research source.
+# PostgreSQL and Spaces are separate managed resources in resources-review.json.

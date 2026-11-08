@@ -1,0 +1,102 @@
+{
+  "status": "REVIEW ONLY \u2014 NOT PROVISIONED OR DEPLOYABLE YET",
+  "budget": {
+    "accepted_planning_usd_month": 35,
+    "data_llm_enabled": false
+  },
+  "region_proposal": "App Platform nyc; PostgreSQL nyc3; Spaces nyc3 (official availability verified 2026-11-07; capacity checked at creation)",
+  "project_name_proposal": "paper-portfolio-pilot",
+  "resources": [
+    {
+      "name": "paper-pms-web",
+      "product": "App Platform service",
+      "size_slug": "apps-s-1vcpu-0.5gb",
+      "count": 1,
+      "monthly_usd": 5,
+      "public_routes": [
+        "/",
+        "/snapshot.json",
+        "/health/freshness"
+      ],
+      "database_role": "pms_public_read",
+      "auto_deploy": false
+    },
+    {
+      "name": "paper-pms-cycle",
+      "product": "App Platform scheduled job",
+      "size_slug": "apps-s-1vcpu-1gb-fixed",
+      "count": 1,
+      "cron": "0 * * * *",
+      "time_zone": "Etc/UTC",
+      "monthly_full_time_equivalent_usd": 10,
+      "estimated_running_hours_month": 10,
+      "estimated_usd": 0.15,
+      "database_role": "pms_writer",
+      "enabled": false
+    },
+    {
+      "name": "paper-pms-db",
+      "product": "Managed PostgreSQL Standard",
+      "ram_gib": 1,
+      "vcpu": 1,
+      "storage_gib": 10,
+      "standby_count": 0,
+      "listed_usd_month": 15.15,
+      "storage_contingency_usd": 2.15,
+      "trusted_sources": [
+        "reviewed App Platform app only"
+      ],
+      "tls_required": true
+    },
+    {
+      "name": "paper-pms-archive-UNIQUE-SUFFIX",
+      "product": "Spaces",
+      "private": true,
+      "monthly_usd": 5,
+      "retention_proposal": "30 daily and 12 month-end logical backups; content-addressed snapshots",
+      "public_raw_data": false
+    },
+    {
+      "name": "paper-pms-freshness",
+      "product": "Uptime check",
+      "monthly_usd_before_free_allowance": 1,
+      "endpoint": "reviewed app URL /health/freshness",
+      "enabled": false,
+      "alert_recipient": "user selects privately"
+    }
+  ],
+  "runtime_secret_names_only": [
+    "PMS_WRITER_DATABASE_URL",
+    "PMS_PUBLIC_DATABASE_URL",
+    "PMS_ARCHIVE_ACCESS_KEY",
+    "PMS_ARCHIVE_SECRET_KEY"
+  ],
+  "not_required": [
+    "Droplet",
+    "Kubernetes",
+    "Redis",
+    "LLM API",
+    "custom domain",
+    "CLI token in chat"
+  ],
+  "release_blockers": [
+    "Repository-specific cloud source connection requires review and authorization",
+    "Pinned local research revision not yet delivered as reviewed installable release",
+    "Incremental calendar-aware accounting contract not yet extracted upstream",
+    "Docker build/base digest, scheduler/archive recovery and managed-cloud TLS/network validation remain unverified"
+  ],
+  "next_human_auth_after_release_ready": "DigitalOcean Create > App Platform > GitHub; authorize access only to the reviewed PMS repository. Do not click Create App until resource review is accepted.",
+  "official_docs": [
+    "https://docs.digitalocean.com/products/app-platform/details/pricing/",
+    "https://docs.digitalocean.com/products/app-platform/how-to/create-apps/",
+    "https://docs.digitalocean.com/products/app-platform/how-to/manage-jobs/",
+    "https://docs.digitalocean.com/products/app-platform/details/availability/",
+    "https://docs.digitalocean.com/products/databases/postgresql/details/availability/",
+    "https://docs.digitalocean.com/products/spaces/details/availability/"
+  ],
+  "local_database_acceptance": {
+    "version": "PostgreSQL 18.6",
+    "tests_passed": 7,
+    "cloud_parity": "not claimed"
+  }
+}
