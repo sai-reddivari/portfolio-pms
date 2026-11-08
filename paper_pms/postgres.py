@@ -35,6 +35,9 @@ class PostgresStore:
     def read_public(self):
         # A SELECT-only role can execute this; no private-schema access is needed.
         with self.db.transaction():
+            # Bound lock waits and query execution so a blocked DB cannot occupy
+            # the web request threads indefinitely. Reset automatically at commit.
+            self.db.execute("SET LOCAL statement_timeout = '5s'")
             row = self.db.execute('SELECT projection FROM pms_public.snapshots '
                                   'ORDER BY recorded_at DESC, snapshot_id DESC LIMIT 1').fetchone()
         if not row:

@@ -12,6 +12,7 @@ FILES = [
     'deploy/postgres-schema-proposal.sql', 'deploy/database-roles.review.sql',
     'integration/README.md', 'integration/test_postgres.py',
     'scripts/build_review_package.py',
+    'scripts/container_smoke.py', '.github/workflows/container.yml',
     'preview/index.html', 'preview/snapshot.json',
 ]
 FILES += [str(p.relative_to(ROOT)) for folder in ['paper_pms', 'tests']

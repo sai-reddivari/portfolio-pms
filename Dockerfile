@@ -1,6 +1,5 @@
-# Web image preparation only; Docker is unavailable locally, so build unverified.
-# Resolve an approved immutable base-image digest before deployment.
-FROM python:3.14-slim
+# Web runtime only; the separate research worker is not packaged.
+FROM python:3.14-slim@sha256:af8a5aa14780025dbfbcfbc81bd8a91ebd87711dd5b0f48ed71090949dd7cb1d
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 WORKDIR /app
 COPY requirements-runtime.txt ./
